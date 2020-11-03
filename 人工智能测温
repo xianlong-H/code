@@ -4,31 +4,31 @@
 #include <mPython_tinywebdb.h>
 #include <DFRobot_HuskyLens.h>
 
-// 鍔ㄦ€佸彉閲?
+// 动态变量
 String mind_s_XingMing;
-// 闈欐€佸父閲?
+// 静态常量
 const String topics[5] = {"6ablb9OGR","","","",""};
-// 鍒涘缓瀵硅薄
+// 创建对象
 DFRobot_Iot       myIot;
 mPython_TinyWebDB mydb;
 DFRobot_HuskyLens huskylens;
 DFRobot_MLX90614  mlx90614;
 
 
-// 涓荤▼搴忓紑濮?
+// 主程序开始
 void setup() {
 	mPython.begin();
 	display.setCursorLine(1);
-	display.printLine("寮€濮嬭繛鎺iFi");
+	display.printLine("开始连接WiFi");
 	myIot.wifiConnect("Huang", "88888888");
 	while (!myIot.wifiStatus()) {yield();}
 	display.setCursorLine(2);
-	display.printLine("WiFi杩炴帴鎴愬姛");
+	display.printLine("WiFi连接成功");
 	myIot.init("iot.dfrobot.com.cn","aETlbrdGR","","-Po_x9dGRz",topics,1883);
 	myIot.connect();
 	while (!myIot.connected()) {yield();}
 	display.setCursorLine(3);
-	display.printLine("MQTT杩炴帴鎴愬姛");
+	display.printLine("MQTT连接成功");
 	delay(2000);
 	display.fillScreen(0);
 	mydb.setServerParameter("http://tinywebdb.appinventor.space/api", "huang11","658949d1");
@@ -43,13 +43,14 @@ void loop() {
 			display.setCursorLine(1);
 			display.printLine(mind_s_XingMing);
 			display.setCursorLine(2);
-			display.printLine("璇蜂繚鎸侀潰鍚戞憚鍍忓ご");
+			display.printLine("请保持面向摄像头");
 			display.setCursorLine(3);
-			display.printLine("寮€濮嬫祴娓?);
+			display.printLine("开始测温");
 			display.setCursorLine(4);
-			display.printLine((String("浣撴俯涓猴細") + String(mlx90614.getObjectTempC())));
-			myIot.publish(topic_0, (String(mind_s_XingMing) + String((String("鐨勬俯搴︿负锛?) + String(mlx90614.getObjectTempC())))));
+			display.printLine((String("体温为：") + String(mlx90614.getObjectTempC())));
+			myIot.publish(topic_0, (String(mind_s_XingMing) + String((String("的温度为：") + String(mlx90614.getObjectTempC())))));
 			delay(3000);
 		}
 	}
 }
+
