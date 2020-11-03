@@ -1,0 +1,27 @@
+/*!
+ * MindPlus
+ * mpython
+ *
+ */
+#include <MPython.h>
+
+
+// 主程序开始
+void setup() {
+	mPython.begin();
+}
+void loop() {
+	display.setCursorLine(1);
+	display.printLine((String("当前声音强度：") + String((sound.read()))));
+	delay(1000);
+	if (((sound.read())>100)) {
+		rgb.write(-1, 0x0000FF);
+		display.setCursorLine(2);
+		display.printLine("灯已打开");
+	}
+	else {
+		rgb.write(-1, 0x000000);
+		display.setCursorLine(2);
+		display.printLine("灯已关闭");
+	}
+}
