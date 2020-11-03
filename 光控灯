@@ -1,0 +1,27 @@
+/*!
+ * MindPlus
+ * mpython
+ *
+ */
+#include <MPython.h>
+
+
+// 主程序开始
+void setup() {
+	mPython.begin();
+}
+void loop() {
+	display.setCursorLine(1);
+	display.printLine((String("当前环境光强度：") + String((light.read()))));
+	delay(1000);
+	if (((light.read())<50)) {
+		rgb.write(-1, 0xFFFFFF);
+		display.setCursorLine(2);
+		display.printLine("灯已打开");
+	}
+	else {
+		rgb.write(-1, 0x000000);
+		display.setCursorLine(2);
+		display.printLine("灯已关闭");
+	}
+}
