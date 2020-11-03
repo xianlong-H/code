@@ -1,0 +1,41 @@
+/*!
+ * MindPlus
+ * mpython
+ *
+ */
+#include <MPython.h>
+#include <DFRobot_Iot.h>
+#include <MPython_ASR.h>
+// 创建对象
+DFRobot_Iot myIot;
+MPython_ASR mpythonAsr;
+String      str_mpythonAsr_result;
+
+
+// 主程序开始
+void setup() {
+	mPython.begin();
+	display.setCursorLine(1);
+	display.printLine("开始连接WiFi");
+	myIot.wifiConnect("Huang", "Huang123456.");
+	while (!myIot.wifiStatus()) {yield();}
+	display.setCursorLine(1);
+	display.printLine("Wifi连接成功");
+}
+void loop() {
+	display.setCursorLine(2);
+	display.printLine("语音识别中...");
+	str_mpythonAsr_result=mpythonAsr.getAsrResult(2);
+	display.setCursorLine(3);
+	display.printLine((str_mpythonAsr_result));
+	delay(100);
+	if (((String(str_mpythonAsr_result).indexOf(String("开灯")) != -1))) {
+		rgb.write(-1, 0xFFFF00);
+	}
+	delay(100);
+	if (((String(str_mpythonAsr_result).indexOf(String("关灯")) != -1))) {
+		rgb.write(-1, 0x000000);
+	}
+	display.fillInLine(2, 0);
+	delay(1000);
+}
