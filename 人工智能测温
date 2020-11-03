@@ -1,0 +1,55 @@
+#include <MPython.h>
+#include <DFRobot_Iot.h>
+#include <DFRobot_MLX90614.h>
+#include <mPython_tinywebdb.h>
+#include <DFRobot_HuskyLens.h>
+
+// 鍔ㄦ€佸彉閲?
+String mind_s_XingMing;
+// 闈欐€佸父閲?
+const String topics[5] = {"6ablb9OGR","","","",""};
+// 鍒涘缓瀵硅薄
+DFRobot_Iot       myIot;
+mPython_TinyWebDB mydb;
+DFRobot_HuskyLens huskylens;
+DFRobot_MLX90614  mlx90614;
+
+
+// 涓荤▼搴忓紑濮?
+void setup() {
+	mPython.begin();
+	display.setCursorLine(1);
+	display.printLine("寮€濮嬭繛鎺iFi");
+	myIot.wifiConnect("Huang", "88888888");
+	while (!myIot.wifiStatus()) {yield();}
+	display.setCursorLine(2);
+	display.printLine("WiFi杩炴帴鎴愬姛");
+	myIot.init("iot.dfrobot.com.cn","aETlbrdGR","","-Po_x9dGRz",topics,1883);
+	myIot.connect();
+	while (!myIot.connected()) {yield();}
+	display.setCursorLine(3);
+	display.printLine("MQTT杩炴帴鎴愬姛");
+	delay(2000);
+	display.fillScreen(0);
+	mydb.setServerParameter("http://tinywebdb.appinventor.space/api", "huang11","658949d1");
+	huskylens.beginI2CUntilSuccess();
+	huskylens.writeAlgorithm(ALGORITHM_FACE_RECOGNITION);
+}
+void loop() {
+	huskylens.request();
+	if (huskylens.isAppearDirect(HUSKYLENSResultBlock)) {
+		if (huskylens.isLearned(huskylens.readBlockCenterParameterDirect().ID)) {
+			mind_s_XingMing = mydb.getTag((String(huskylens.readBlockCenterParameterDirect().ID)));
+			display.setCursorLine(1);
+			display.printLine(mind_s_XingMing);
+			display.setCursorLine(2);
+			display.printLine("璇蜂繚鎸侀潰鍚戞憚鍍忓ご");
+			display.setCursorLine(3);
+			display.printLine("寮€濮嬫祴娓?);
+			display.setCursorLine(4);
+			display.printLine((String("浣撴俯涓猴細") + String(mlx90614.getObjectTempC())));
+			myIot.publish(topic_0, (String(mind_s_XingMing) + String((String("鐨勬俯搴︿负锛?) + String(mlx90614.getObjectTempC())))));
+			delay(3000);
+		}
+	}
+}
